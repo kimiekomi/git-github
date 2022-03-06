@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from random import randint
 import os
 
@@ -5,6 +7,19 @@ import os
 class Ship:
     def __init__(self, size, orientation, location):
         self.size = size
+        
+        #Settings Variables
+        self.row_size = 9 #number of rows
+        self.col_size = 9 #number of columns
+        self.num_ships = 4
+        self.max_ship_size = 5
+        self.min_ship_size = 2
+        self.num_turns = 40
+
+        #Create lists
+        self.ship_list = []
+        self.board = [[0] * col_size for x in range(row_size)]
+        self.board_display = [["O"] * col_size for x in range(row_size)]
     
         if orientation == 'horizontal' or orientation == 'vertical':
             self.orientation = orientation
@@ -84,22 +99,6 @@ class Ship:
                 raise RuntimeError("Board display inaccurate")
         
         return True
-
-  
-#Settings Variables
-row_size = 9 #number of rows
-col_size = 9 #number of columns
-num_ships = 4
-max_ship_size = 5
-min_ship_size = 2
-num_turns = 40
-
-#Create lists
-ship_list = []
-
-board = [[0] * col_size for x in range(row_size)]
-
-board_display = [["O"] * col_size for x in range(row_size)]
 
 #Functions
 def print_board(board_array):
