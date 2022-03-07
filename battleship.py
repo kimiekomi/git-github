@@ -5,8 +5,11 @@ import os
 
 
 class Game():
-    os.system('clear')
-    print_board(board_display)
+    def __init__(self):
+        os.system('clear')
+        self.print_board(board_display)
+        
+        self.num_turns = 40
 
     for turn in range(num_turns):
         print("Turn:", turn + 1, "of", num_turns)
@@ -46,7 +49,7 @@ class Game():
             board_display[guess_coords['row']][guess_coords['col']] = '*'
             print("You missed!")
 
-        print_board(board_display)
+        self.print_board(board_display)
     
         if not ship_list:
             break
@@ -58,42 +61,7 @@ class Game():
         print("All the ships are sunk. You win!")
 
 
-    def search_locations(self, size, orientation):
-        locations = []
     
-        if orientation != 'horizontal' and orientation != 'vertical':
-            raise ValueError("Orientation must have a value of either 'horizontal' or 'vertical'.")
-    
-        if orientation == 'horizontal':
-            if size <= col_size:
-                for r in range(row_size):
-                    for c in range(col_size - size + 1):
-                        if 1 not in board[r][c:c+size]:
-                            locations.append({'row': r, 'col': c})
-                  
-        elif orientation == 'vertical':
-            if size <= row_size:
-                for c in range(col_size):
-                    for r in range(row_size - size + 1):
-                        if 1 not in [board[i][c] for i in range(r, r+size)]:
-                            locations.append({'row': r, 'col': c})
-    
-        if not locations:
-            return 'None'
-      
-        return locations
-
-    def random_location(self):
-        size = randint(min_ship_size, max_ship_size)
-        orientation = 'horizontal' if randint(0, 1) == 0 else 'vertical'
-    
-        locations = search_locations(size, orientation)
-        
-        if locations == 'None':
-            return 'None'
-      
-        return {'location': locations[randint(0, len(locations) - 1)], 'size': size,\
-         'orientation': orientation}
 
 
     def get_row(self):
@@ -155,22 +123,106 @@ class Game():
 
 
 class Board:
-    def __init__(self, size, orientation, location):
-        self.size = size
-        
-        #Settings Variables
+    # creates and displays board
+    def __init__(self):
         self.row_size = 9 #number of rows
         self.col_size = 9 #number of columns
-        self.num_ships = 4
-        self.max_ship_size = 5
-        self.min_ship_size = 2
-        self.num_turns = 40
 
-        #Create lists
-        self.ship_list = []
         self.board = [[0] * self.col_size for x in range(self.row_size)]
         self.board_display = [["O"] * self.col_size for x in range(row_size)]
     
+        
+    
+        if self.filled():
+            print_board(board)
+            print(" ".join(str(coords) for coords in self.coordinates))
+            raise IndexError("A ship already occupies that space.")
+            
+        else:
+            self.fillBoard()
+
+
+    def filled(self):
+        for coords in self.coordinates:
+            
+            if board[coords['row']][coords['col']] == 1:
+                return True
+              
+        return False
+
+
+    def fillBoard(self):
+        for coords in self.coordinates:
+            board[coords['row']][coords['col']] = 1
+
+            
+class Ship(size, orientation, location):
+    # creates and positions ships
+    def __init__(self, size, orientation, location):
+        self.size = size
+        self.orientation = orientation
+        self.location = location
+        
+        self.num_ships = 4
+        self.max_ship_size = 5
+        self.min_ship_size = 2
+
+        temp = 0
+        self.ship_list = []
+
+
+    def random_location(self, size, orientation):
+        self.size = randint(self.min_ship_size, self.max_ship_size)
+        self.orientation = 'horizontal' if randint(0, 1) == 0 else 'vertical'
+    
+        self.locations = search_locations(size, orientation)
+        
+        if locations == 'None':
+            return 'None'
+      
+        return {'location': locations[randint(0, len(locations) - 1)], 'size': size,\
+         'orientation': orientation}
+
+
+    def search_locations(self, size, orientation):
+        locations = []
+    
+        if orientation != 'horizontal' and orientation != 'vertical':
+            raise ValueError("Orientation must have a value of either 'horizontal' or 'vertical'.")
+    
+        if orientation == 'horizontal':
+            if size <= col_size:
+                for r in range(row_size):
+                    for c in range(col_size - size + 1):
+                        if 1 not in board[r][c:c+size]:
+                            locations.append({'row': r, 'col': c})
+                  
+        else:
+            if size <= row_size:
+                for c in range(col_size):
+                    for r in range(row_size - size + 1):
+                        if 1 not in [board[i][c] for i in range(r, r+size)]:
+                            locations.append({'row': r, 'col': c})
+    
+        if not locations:
+            return 'None'
+      
+        return locations
+
+        
+
+        while temp < self.num_ships:
+            ship_info = random_location()
+    
+            if ship_info == 'None':
+                continue
+        
+            self.ship_list.append(Ship(ship_info['size'], ship_info['orientation'], ship_info['location']))
+            temp += 1
+
+
+
+        
         if orientation == 'horizontal' or orientation == 'vertical':
             self.orientation = orientation
             
@@ -206,41 +258,4 @@ class Board:
                   
             else:
                 raise IndexError("Column is out of range.")
-    
-        if self.filled():
-            print_board(board)
-            print(" ".join(str(coords) for coords in self.coordinates))
-            raise IndexError("A ship already occupies that space.")
-            
-        else:
-            self.fillBoard()
-
-
-    def filled(self):
-        for coords in self.coordinates:
-            
-            if board[coords['row']][coords['col']] == 1:
-                return True
-              
-        return False
-
-
-    def fillBoard(self):
-        for coords in self.coordinates:
-            board[coords['row']][coords['col']] = 1
-
-
-    
-
-
-class Ship:
-    temp = 0
-    while temp < self.num_ships:
-        ship_info = random_location()
-
-        if ship_info == 'None':
-            continue
-    
-        ship_list.append(Ship(ship_info['size'], ship_info['orientation'], ship_info['location']))
-        temp += 1
 
