@@ -5,7 +5,7 @@ import os
 import random
 from random import randint
 
-class Battleship():
+class Battleship_Game():
 
     def __init__(self, num_turns, board_size, ship_count):
 
@@ -30,7 +30,6 @@ class Battleship():
             guess_coords = {}
             
             while True:
-    
                 row = self.get_number("Enter a row")
                 column = self.get_number("Enter a column")
             
@@ -41,9 +40,14 @@ class Battleship():
 
             self.board.process_guess (row, column)
 
+            if len(self.board.ships) == 0:
+                break
+
             os.system('clear')
             self.board.display_board()
             self.board.show_ships ()
+
+        print ("no more ships")
 
 
     def get_number(self, prompt):
@@ -120,7 +124,7 @@ class Battleship_Board:
                 print ("collision");
                 continue
 
-            self.ships.append (Ship (start_row=random_row, start_column=random_column, size=random_size, orientation=random_orientation))
+            self.ships.append (Battle_Ship (start_row=random_row, start_column=random_column, size=random_size, orientation=random_orientation))
 
             ship_count += 1
 
@@ -167,8 +171,12 @@ class Battleship_Board:
 
         for ship in self.ships:
 
-            if ship.hit_test (row, column):
+            if ship.process_hit (row, column):
                 self.board [row][column] = 2
+
+                if ship.isDestroyed ():
+                    self.ships.remove(ship)
+
                 return
 
         self.board[row][column] = 1
@@ -181,7 +189,7 @@ class Battleship_Board:
 
     def print_board (self, board):
 
-        print("\n  " + " ".join(str(x) for x in range(0, self.number_of_columns )))
+        print("\n  " + " ".join(str(x+1) for x in range(0, self.number_of_columns )))
         
         base = ord ('A')
 
@@ -191,7 +199,7 @@ class Battleship_Board:
         print()
 
 
-class Ship:
+class Battle_Ship:
 
     # ship_id = 1
 
@@ -259,10 +267,15 @@ class Ship:
             return True
 
 
+    def isDestroyed (self):
+
+        return sum(self.status) == 0
+
+
     def __repr__(self): 
         return f"(row={self.start_row}, column={self.start_column}, size={self.size}, orientation='{self.orientation}')"
 
 
-game = Battleship (num_turns=40, board_size=10, ship_count=5)
+game = Battleship_Game (num_turns=40, board_size=10, ship_count=1)
 
 game.play()
