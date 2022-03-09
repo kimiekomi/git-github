@@ -5,7 +5,7 @@ import os
 import random
 from random import randint
 
-class Game():
+class Battleship():
 
     def __init__(self, num_turns, board_size, ship_count):
 
@@ -13,7 +13,7 @@ class Game():
 
         self.num_turns = num_turns
 
-        self.board = Board (board_size, ship_count)
+        self.board = Battleship_Board (board_size, ship_count)
 
         # self.board.display()
 
@@ -62,79 +62,7 @@ class Game():
                 print("\nPlease enter a number")
 
 
-    def search_locations(self, size, orientation):
-        locations = []
-    
-        if orientation != 'horizontal' and orientation != 'vertical':
-            raise ValueError("Orientation must have a value of either 'horizontal' or 'vertical'.")
-    
-        if orientation == 'horizontal':
-            if size <= col_size:
-                for r in range(row_size):
-                    for c in range(col_size - size + 1):
-                        if 1 not in board[r][c:c+size]:
-                            locations.append({'row': r, 'col': c})
-                  
-        else:
-            if size <= row_size:
-                for c in range(col_size):
-                    for r in range(row_size - size + 1):
-                        if 1 not in [board[i][c] for i in range(r, r+size)]:
-                            locations.append({'row': r, 'col': c})
-    
-        if not locations:
-            return 'None'
-      
-        return locations
-
-        while temp < self.num_ships:
-            ship_info = random_location()
-    
-            if ship_info == 'None':
-                continue
-        
-            self.ship_list.append(Ship(ship_info['size'], ship_info['orientation'], ship_info['location']))
-            temp += 1
-        
-        if orientation == 'horizontal' or orientation == 'vertical':
-            self.orientation = orientation
-            
-        else:
-            raise ValueError("Value must be 'horizontal' or 'vertical'.")
-
-        if orientation == 'horizontal':
-            if location['row'] in range(row_size):
-                  
-                self.coordinates = []
-                for index in range(size):
-                    
-                    if location['col'] + index in range(col_size):
-                        self.coordinates.append({'row': location['row'], 'col': location['col'] + index})
-                      
-                    else:
-                        raise IndexError("Column is out of range.")
-                      
-            else:
-                raise IndexError("Row is out of range.")
-              
-        elif orientation == 'vertical':
-            if location['col'] in range(col_size):
-              
-                self.coordinates = []
-                for index in range(size):
-                
-                    if location['row'] + index in range(row_size):
-                        self.coordinates.append({'row': location['row'] + index, 'col': location['col']})
-                  
-                    else:
-                        raise IndexError("Row is out of range.")
-                  
-            else:
-                raise IndexError("Column is out of range.")
-
-
-
-class Board:
+class Battleship_Board:
 
     def __init__(self, length, ship_count):
 
@@ -148,8 +76,6 @@ class Board:
 
         self.display_board ()
         self.show_ships ()
-
-        # print (self.ships)
 
 
     def setup_ships (self):
@@ -248,19 +174,6 @@ class Board:
         self.board[row][column] = 1
 
 
-    def random_location(self, size, orientation):
-
-        self.size = randint(self.min_ship_size, self.max_ship_size)
-        self.orientation = 'horizontal' if randint(0, 1) == 0 else 'vertical'
-    
-        self.locations = search_locations(size, orientation)
-        
-        if locations == 'None':
-            return 'None'
-      
-        return {'location': locations[randint(0, len(locations) - 1)], 'size': size, 'orientation': orientation}
-
-
     def display_board (self):
 
         self.print_board (self.board)
@@ -284,9 +197,11 @@ class Ship:
 
     def __init__(self, start_row, start_column, size, orientation):
 
+        self.size = size
+
         self.start_row = start_row
         self.start_column = start_column
-        self.size = size
+
         self.orientation = orientation
 
         self.status = [size for x in range(size)]
@@ -348,6 +263,6 @@ class Ship:
         return f"(row={self.start_row}, column={self.start_column}, size={self.size}, orientation='{self.orientation}')"
 
 
-game = Game (num_turns=40, board_size=10, ship_count=5)
+game = Battleship (num_turns=40, board_size=10, ship_count=5)
 
 game.play()
