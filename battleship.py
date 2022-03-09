@@ -5,6 +5,8 @@ import os
 import random
 from random import randint
 
+Trace = False
+
 class Battleship_Game():
 
     def __init__(self, num_turns, board_size, ship_count):
@@ -23,16 +25,17 @@ class Battleship_Game():
         print (f"play ()")
 
         for turn in range(self.num_turns):
-            print("Turn:", turn + 1, "of", self.num_turns)
-            print("Ships left:", len(self.board.ships))
-            print()
-        
-            guess_coords = {}
             
             while True:
-                row = self.get_number("Enter a row")
+                print("Turn:", turn + 1, "of", self.num_turns)
+                print("Ships left:", len(self.board.ships))
+                print()
+        
+                row = self.get_letter("Enter a row")
                 column = self.get_number("Enter a column")
             
+                if Trace: print (row, column)
+    
                 if self.board.board[row][column] == 0:
                     break
 
@@ -40,14 +43,39 @@ class Battleship_Game():
 
             self.board.process_guess (row, column)
 
-            if len(self.board.ships) == 0:
-                break
-
             os.system('clear')
+
             self.board.display_board()
             self.board.show_ships ()
 
+            if self.board.board[row][column] == 2:
+                print ("\nHit!")
+
+            if len(self.board.ships) == 0:
+                break
+
+
         print ("no more ships")
+
+
+    def get_letter(self, prompt):
+
+        while True:
+
+            try:
+                guess = input(f"{prompt}: ").upper()
+
+                if len(guess) != 1: continue
+
+                guess = ord(guess)-ord('A')
+                
+                if guess in range(self.board.number_of_rows):
+                    return guess
+          
+                print("\nOops, that's not even in the ocean.")
+                    
+            except ValueError:
+                print("\nPlease enter a number")
 
 
     def get_number(self, prompt):
